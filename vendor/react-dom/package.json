@@ -1,8 +1,0 @@
-{
-  "name": "react-dom",
-  "version": "0.0.0-local",
-  "type": "module",
-  "exports": {
-    "./client": "./client/index.js"
-  }
-}
