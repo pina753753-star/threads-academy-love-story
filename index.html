@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Threads学園 恋物語 〜桜の散らない春〜</title>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    html, body, #root { margin: 0; min-height: 100%; background:#fff7fb; }
+    .loading { min-height:100vh; display:flex; align-items:center; justify-content:center; font-family:system-ui,sans-serif; color:#9c4f74; background:#fff7fb; padding:24px; text-align:center; }
+  </style>
+</head>
+<body>
+  <div id="root"><div class="loading">読み込み中...</div></div>
+  <script>
+    (async function () {
+      const fileName = "otome_game%20(1).jsx";
+      try {
+        const res = await fetch("./" + fileName + "?v=" + Date.now());
+        if (!res.ok) throw new Error("ゲームファイルが見つかりません: " + fileName);
+        let code = await res.text();
+        code = code.replace(/import\s*\{\s*useState\s*,\s*useMemo\s*\}\s*from\s*["']react["'];?/, "const { useState, useMemo } = React;");
+        code = code.replace(/export\s+default\s+function\s+OtomeGame/, "function OtomeGame");
+        code += "\nReactDOM.createRoot(document.getElementById('root')).render(<OtomeGame />);";
+        const transformed = Babel.transform(code, { presets: ["env", "react"] }).code;
+        new Function(transformed)();
+      } catch (e) {
+        console.error(e);
+        document.getElementById("root").innerHTML = '<div class="loading">読み込みに失敗しました。<br>otome_game (1).jsx がリポジトリ直下にあるか確認してください。</div>';
+      }
+    })();
+  </script>
+</body>
+</html>
