@@ -43,7 +43,7 @@
       const repo = "pina753753-star/threads-academy-love-story";
       const baseGameBlobSha = "aa3e0328c4ef800af9f3cd7bec862fa863e50734";
       try {
-        const res = await fetch(`https://api.github.com/repos/${repo}/git/blobs/${baseGameBlobSha}?v=15`, { cache: "no-store" });
+        const res = await fetch(`https://api.github.com/repos/${repo}/git/blobs/${baseGameBlobSha}?v=16`, { cache: "no-store" });
         if (!res.ok) throw new Error(`GitHub API error: ${res.status}`);
         const data = await res.json();
         const b64 = data.content.replace(/\s/g, "");
@@ -151,19 +151,19 @@
 
         html = html.replaceAll(
           'komorin: { ep: [STILL_IMGS.k1, STILL_IMGS.k2, STILL_IMGS.k3, STILL_IMGS.k4], confess: STILL_IMGS.k5, after: STILL_IMGS.kAfter },',
-          'komorin: { ep: [STILL_IMGS.k1, STILL_IMGS.k2, STILL_IMGS.k4, STILL_IMGS.k5], confess: STILL_IMGS.k6, after: STILL_IMGS.kAfter },'
+          'komorin: { ep: [STILL_IMGS.k2, STILL_IMGS.k3, STILL_IMGS.k4, STILL_IMGS.k5], confess: STILL_IMGS.k6, after: STILL_IMGS.kAfter },'
         );
         html = html.replaceAll(
           'yukke: { ep: [STILL_IMGS.y1, STILL_IMGS.y2, STILL_IMGS.y3, STILL_IMGS.y4], confess: STILL_IMGS.y5, after: STILL_IMGS.yAfter },',
-          'yukke: { ep: [STILL_IMGS.y1, STILL_IMGS.y2, STILL_IMGS.y4, STILL_IMGS.y5], confess: STILL_IMGS.y6, after: STILL_IMGS.yAfter },'
+          'yukke: { ep: [STILL_IMGS.y2, STILL_IMGS.y3, STILL_IMGS.y4, STILL_IMGS.y5], confess: STILL_IMGS.y6, after: STILL_IMGS.yAfter },'
         );
         html = html.replaceAll(
           'yohaku: { ep: [STILL_IMGS.h1, STILL_IMGS.h2, STILL_IMGS.h3, STILL_IMGS.h4], confess: STILL_IMGS.h5, after: STILL_IMGS.hAfter },',
-          'yohaku: { ep: [STILL_IMGS.h1, STILL_IMGS.h2, STILL_IMGS.h4, STILL_IMGS.h5], confess: STILL_IMGS.h6, after: STILL_IMGS.hAfter },'
+          'yohaku: { ep: [STILL_IMGS.h2, STILL_IMGS.h3, STILL_IMGS.h4, STILL_IMGS.h5], confess: STILL_IMGS.h6, after: STILL_IMGS.hAfter },'
         );
         html = html.replaceAll(
           'nagi: { ep: [STILL_IMGS.n1, STILL_IMGS.n2, STILL_IMGS.n3, STILL_IMGS.n4], confess: STILL_IMGS.n5, after: STILL_IMGS.n6 },',
-          'nagi: { ep: [STILL_IMGS.n1, STILL_IMGS.n2, STILL_IMGS.n4, STILL_IMGS.n5], confess: STILL_IMGS.n6, after: STILL_IMGS.nAfter || STILL_IMGS.n6 },'
+          'nagi: { ep: [STILL_IMGS.n2, STILL_IMGS.n3, STILL_IMGS.n4, STILL_IMGS.n5], confess: STILL_IMGS.n6, after: STILL_IMGS.nAfter || STILL_IMGS.n6 },'
         );
 
         html = html.replaceAll(
