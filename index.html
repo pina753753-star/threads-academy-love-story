@@ -6,8 +6,20 @@
   <title>Threads学園 恋物語 〜桜の散らない春〜</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background: #fdeef3; overflow-x: hidden; }
-    #root { min-height: 100vh; }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      overscroll-behavior: none;
+      background: #fdeef3;
+    }
+    #root {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100dvh;
+      overflow: hidden;
+    }
   </style>
 </head>
 <body>
@@ -828,6 +840,7 @@ function Petals() {
   const [mood, setMood] = useState("day"); // day | sunset | night
   const [pendingEnd, setPendingEnd] = useState(null);
   const [still, setStill] = useState(null);
+  const [currentRouteId, setCurrentRouteId] = useState(null);
 
   const topCharId = useMemo(() => {
     const e = Object.entries(aff).sort((a, b) => b[1] - a[1]);
@@ -843,6 +856,7 @@ function Petals() {
     setEndingInfo(null);
     setPendingEnd(null);
     setStill(null);
+    setCurrentRouteId(null);
     setMood("day");
     playScene(PROLOGUE, null, "mapStart");
   }
@@ -881,7 +895,7 @@ function Petals() {
     } else if (afterScene === "mapAfterRan") {
       goMapOrEnding();
     } else if (afterScene === "confess") {
-      const t = topCharId;
+      const t = currentRouteId || topCharId;
       if (pendingEnd === "happy") {
         setEndingInfo({ type: "happy", char: t });
         if (STILLS[t]) setStill(STILLS[t].after || STILLS[t].confess);
@@ -908,12 +922,31 @@ function Petals() {
   }
 
   function goMapOrEnding() {
+    // 4話完了チェック：currentRouteIdのキャラを4回選んだら告白へ
+    if (currentRouteId && visits[currentRouteId] >= 4) {
+      const id = currentRouteId;
+      setMood("sunset");
+      if (aff[id] >= 5) {
+        const cs = CONFESS_SCENE(id);
+        setStill(STILLS[id] ? STILLS[id].confess : null);
+        playScene(cs.lines, { ...cs.choice, charId: id }, "confess");
+      } else if (aff[id] >= 3) {
+        setEndingInfo({ type: "friend", char: id });
+        setStill(null);
+        playScene(ENDINGS[id].friend, null, "ending");
+      } else {
+        setEndingInfo({ type: "solo" });
+        setStill(null);
+        playScene(SOLO_ENDING, null, "ending");
+      }
+      return;
+    }
     const next = turn + 1;
     setTurn(next);
     if (next > MAX_TURN) {
-      // エンディング判定
+      // MAX_TURN到達時のフォールバック
       setMood("sunset");
-      const top = topCharId;
+      const top = currentRouteId || topCharId;
       if (!top || aff[top] < 3) {
         setEndingInfo({ type: "solo" });
         setStill(null);
@@ -959,6 +992,7 @@ function Petals() {
         x === 1 ? RAIN_STILLS_BY_CHAR[id] : x === 2 ? FIRE_STILLS_BY_CHAR[id] : null;
       setStill(charStill || EXTRA_STILLS[x] || null);
     }
+    setCurrentRouteId(id);
     setVisits({ ...visits, [id]: visits[id] + 1 });
     setMood(moodKey);
     playScene(ev.lines, { ...ev.choice, charId: id }, "map");
@@ -973,8 +1007,9 @@ function Petals() {
     }
     if (opt.ran !== undefined) {
       setRanPts((r) => r + opt.ran);
-      if (opt.top && topCharId) {
-        setAff((a) => ({ ...a, [topCharId]: Math.max(0, a[topCharId] + opt.top) }));
+      if (opt.top && (currentRouteId || topCharId)) {
+        const _affTarget = currentRouteId || topCharId;
+        setAff((a) => ({ ...a, [_affTarget]: Math.max(0, a[_affTarget] + opt.top) }));
       }
     }
     setQueue(opt.reply);
