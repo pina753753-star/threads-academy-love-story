@@ -43,7 +43,7 @@
       const repo = "pina753753-star/threads-academy-love-story";
       const baseGameBlobSha = "aa3e0328c4ef800af9f3cd7bec862fa863e50734";
       try {
-        const res = await fetch(`https://api.github.com/repos/${repo}/git/blobs/${baseGameBlobSha}?v=17`, { cache: "no-store" });
+        const res = await fetch(`https://api.github.com/repos/${repo}/git/blobs/${baseGameBlobSha}?v=18`, { cache: "no-store" });
         if (!res.ok) throw new Error(`GitHub API error: ${res.status}`);
         const data = await res.json();
         const b64 = data.content.replace(/\s/g, "");
@@ -84,17 +84,31 @@
         html = html.replaceAll("7週間で、運命の相手を見つけよう", "");
         html = html.replaceAll('emoji: "🌼",', 'emoji: "🌱",');
 
-        // 立ち絵・スチル・背景をすべてPNG参照に統一
-        html = html.replaceAll("." + "jpg", ".png");
+        const NEW_IMAGE_NAMES = [
+          "rAngry",
+          "hAfter", "wAfter", "kAfter", "yAfter",
+          "fireW", "fireK", "fireY", "fireH", "fireN",
+          "rainW", "rainK", "rainY", "rainH", "rainN",
+          "exCafe",
+          "y1", "y2", "y3", "y4", "y5", "y6",
+          "h1", "h2", "h3", "h4", "h5", "h6",
+          "n1", "n2", "n3", "n4", "n5", "n6", "nAfter",
+          "r1", "r2", "r3",
+          "k1", "k2", "k3", "k4", "k5", "k6",
+          "w1", "w2", "w3", "w4", "w5", "w6"
+        ];
 
-        // 新しいアフタースチルを登録
-        html = html.replaceAll('  w5: "images/w5.png",', '  w5: "images/w5.png",\n  w6: "images/w6.png",');
-        html = html.replaceAll('  k5: "images/k5.png",', '  k5: "images/k5.png",\n  k6: "images/k6.png",');
-        html = html.replaceAll('  y5: "images/y5.png",', '  y5: "images/y5.png",\n  y6: "images/y6.png",');
-        html = html.replaceAll('  h5: "images/h5.png",', '  h5: "images/h5.png",\n  h6: "images/h6.png",');
-        html = html.replaceAll('  n6: "images/n6.png",', '  n6: "images/n6.png",\n  nAfter: "images/nAfter.png",');
+        NEW_IMAGE_NAMES.forEach((name) => {
+          html = html.replaceAll(`images/${name}.jpg`, `images/${name}.PNG`);
+          html = html.replaceAll(`images/${name}.png`, `images/${name}.PNG`);
+        });
 
-        // ハッピーエンド後の画像だけ新スチルへ変更
+        html = html.replaceAll('  w5: "images/w5.PNG",', '  w5: "images/w5.PNG",\n  w6: "images/w6.PNG",');
+        html = html.replaceAll('  k5: "images/k5.PNG",', '  k5: "images/k5.PNG",\n  k6: "images/k6.PNG",');
+        html = html.replaceAll('  y5: "images/y5.PNG",', '  y5: "images/y5.PNG",\n  y6: "images/y6.PNG",');
+        html = html.replaceAll('  h5: "images/h5.PNG",', '  h5: "images/h5.PNG",\n  h6: "images/h6.PNG",');
+        html = html.replaceAll('  n6: "images/n6.PNG",', '  n6: "images/n6.PNG",\n  nAfter: "images/nAfter.PNG",');
+
         html = html.replaceAll(
           'watage: { ep: [STILL_IMGS.w1, STILL_IMGS.w2, STILL_IMGS.w3, STILL_IMGS.w4], confess: STILL_IMGS.w5, after: STILL_IMGS.wAfter },',
           'watage: { ep: [STILL_IMGS.w1, STILL_IMGS.w2, STILL_IMGS.w3, STILL_IMGS.w4], confess: STILL_IMGS.w5, after: STILL_IMGS.w6 },'
@@ -115,6 +129,27 @@
           'nagi: { ep: [STILL_IMGS.n1, STILL_IMGS.n2, STILL_IMGS.n3, STILL_IMGS.n4], confess: STILL_IMGS.n5, after: STILL_IMGS.n6 },',
           'nagi: { ep: [STILL_IMGS.n1, STILL_IMGS.n2, STILL_IMGS.n3, STILL_IMGS.n4], confess: STILL_IMGS.n5, after: STILL_IMGS.nAfter },'
         );
+
+        const fallbackScript = `<script>
+(function () {
+  const order = ["PNG", "png", "jpg"];
+  document.addEventListener("error", function (event) {
+    const img = event.target;
+    if (!img || img.tagName !== "IMG") return;
+    const src = img.getAttribute("src") || "";
+    const match = src.match(/^(.*)\\.(PNG|png|jpg)(\\?.*)?$/);
+    if (!match) return;
+    const tried = (img.dataset.imageFallbackTried || "").split(",").filter(Boolean);
+    const current = match[2];
+    if (!tried.includes(current)) tried.push(current);
+    const next = order.find((ext) => !tried.includes(ext));
+    if (!next) return;
+    img.dataset.imageFallbackTried = tried.concat(next).join(",");
+    img.src = match[1] + "." + next + (match[3] || "");
+  }, true);
+})();
+<\/script>`;
+        html = html.replace("</body>", fallbackScript + "</body>");
 
         html = html.replaceAll(
           `, c.placeEmoji
