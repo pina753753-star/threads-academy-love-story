@@ -43,7 +43,7 @@
       const repo = "pina753753-star/threads-academy-love-story";
       const baseGameBlobSha = "aa3e0328c4ef800af9f3cd7bec862fa863e50734";
       try {
-        const res = await fetch(`https://api.github.com/repos/${repo}/git/blobs/${baseGameBlobSha}?v=8`, { cache: "no-store" });
+        const res = await fetch(`https://api.github.com/repos/${repo}/git/blobs/${baseGameBlobSha}?v=10`, { cache: "no-store" });
         if (!res.ok) throw new Error(`GitHub API error: ${res.status}`);
         const data = await res.json();
         const b64 = data.content.replace(/\s/g, "");
@@ -68,7 +68,6 @@
 }`
         );
 
-        // Remove the old 4-week auto-confession branch robustly.
         const marker = "// 4話完了チェック：currentRouteIdのキャラを4回選んだら告白へ";
         const start = html.indexOf(marker);
         if (start !== -1) {
@@ -79,16 +78,12 @@
           }
         }
 
-        // Fallback cleanup, in case spacing differs.
         html = html.replace(
           /\s*\/\/ 4話完了チェック：currentRouteIdのキャラを4回選んだら告白へ[\s\S]*?const next = turn \+ 1;/,
           "\n    const next = turn + 1;"
         );
 
-        html = html.replace(
-          /<div style=\{\{ fontSize: 12, color: "#a98aa0", letterSpacing: 2, marginTop: 10, textShadow: "0 1px 4px rgba\(255,255,255,\.9\)" \}\}>\s*7週間で、運命の相手を見つけよう\s*<\/div>/,
-          ""
-        );
+        html = html.replaceAll("7週間で、運命の相手を見つけよう", "");
 
         document.open();
         document.write(html);
