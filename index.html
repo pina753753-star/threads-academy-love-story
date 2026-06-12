@@ -17,7 +17,7 @@
   const repo="pina753753-star/threads-academy-love-story";
   const baseGameBlobSha="aa3e0328c4ef800af9f3cd7bec862fa863e50734";
   try{
-    const res=await fetch(`https://api.github.com/repos/${repo}/git/blobs/${baseGameBlobSha}?v=21`,{cache:"no-store"});
+    const res=await fetch(`https://api.github.com/repos/${repo}/git/blobs/${baseGameBlobSha}?v=22`,{cache:"no-store"});
     if(!res.ok) throw new Error(`GitHub API error: ${res.status}`);
     const data=await res.json();
     const bytes=Uint8Array.from(atob(data.content.replace(/\s/g,"")),c=>c.charCodeAt(0));
@@ -90,7 +90,7 @@
 
     html=html.replaceAll(
       'const RAN_STILLS = { ep: [null, STILL_IMGS.r2], epi: STILL_IMGS.r1 };',
-      'const RAN_STILLS = { ep: [STILL_IMGS.r1_alt, STILL_IMGS.r2], epi: STILL_IMGS.r1 };'
+      'const RAN_STILLS = { ep: [STILL_IMGS.r1, STILL_IMGS.r2], epi: STILL_IMGS.r1 };'
     );
 
     html=html.replaceAll(
@@ -99,7 +99,7 @@
     );
     html=html.replaceAll(
       '{ t: "「受けて立ちます。正々堂々と」", ran: 1, stillKey: "r3",',
-      '{ t: "「受けて立ちます。正々堂々と」", ran: 1, stillKey: "r1",'
+      '{ t: "「受けて立ちます。正々堂々と」", ran: 1, stillKey: "r1_alt",'
     );
 
     const fallback=`<script>
