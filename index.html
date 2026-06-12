@@ -43,7 +43,7 @@
       const repo = "pina753753-star/threads-academy-love-story";
       const baseGameBlobSha = "aa3e0328c4ef800af9f3cd7bec862fa863e50734";
       try {
-        const res = await fetch(`https://api.github.com/repos/${repo}/git/blobs/${baseGameBlobSha}?v=16`, { cache: "no-store" });
+        const res = await fetch(`https://api.github.com/repos/${repo}/git/blobs/${baseGameBlobSha}?v=17`, { cache: "no-store" });
         if (!res.ok) throw new Error(`GitHub API error: ${res.status}`);
         const data = await res.json();
         const b64 = data.content.replace(/\s/g, "");
@@ -73,9 +73,7 @@
         if (start !== -1) {
           const nextMarker = "const next = turn + 1;";
           const end = html.indexOf(nextMarker, start);
-          if (end !== -1) {
-            html = html.slice(0, start) + html.slice(end);
-          }
+          if (end !== -1) html = html.slice(0, start) + html.slice(end);
         }
 
         html = html.replace(
@@ -86,84 +84,36 @@
         html = html.replaceAll("7週間で、運命の相手を見つけよう", "");
         html = html.replaceAll('emoji: "🌼",', 'emoji: "🌱",');
 
-        const imageReplacements = {
-          "images/w1.jpg": "images/w1.PNG",
-          "images/w2.jpg": "images/w2.png",
-          "images/w3.jpg": "images/w3.png",
-          "images/w4.jpg": "images/w4.png",
-          "images/w5.jpg": "images/w5.png",
-          "images/w6.jpg": "images/w6.png",
-          "images/rainW.jpg": "images/rainW.png",
-          "images/fireW.jpg": "images/fireW.png",
-          "images/wAfter.jpg": "images/wAfter.png",
-          "images/k1.jpg": "images/k1.png",
-          "images/k2.jpg": "images/k2.png",
-          "images/k3.jpg": "images/k3.png",
-          "images/k4.jpg": "images/k4.png",
-          "images/k5.jpg": "images/k5.png",
-          "images/k6.jpg": "images/k6.png",
-          "images/rainK.jpg": "images/rainK.png",
-          "images/fireK.jpg": "images/fireK.png",
-          "images/kAfter.jpg": "images/kAfter.png",
-          "images/y1.jpg": "images/y1.png",
-          "images/y2.jpg": "images/y2.png",
-          "images/y3.jpg": "images/y3.png",
-          "images/y4.jpg": "images/y4.png",
-          "images/y5.jpg": "images/y5.png",
-          "images/y6.jpg": "images/y6.png",
-          "images/rainY.jpg": "images/rainY.png",
-          "images/fireY.jpg": "images/fireY.png",
-          "images/yAfter.jpg": "images/yAfter.png",
-          "images/h1.jpg": "images/h1.png",
-          "images/h2.jpg": "images/h2.png",
-          "images/h3.jpg": "images/h3.png",
-          "images/h4.jpg": "images/h4.png",
-          "images/h5.jpg": "images/h5.png",
-          "images/h6.jpg": "images/h6.png",
-          "images/rainH.jpg": "images/rainH.png",
-          "images/fireH.jpg": "images/fireH.png",
-          "images/hAfter.jpg": "images/hAfter.png",
-          "images/n1.jpg": "images/n1.png",
-          "images/n2.jpg": "images/n2.png",
-          "images/n3.jpg": "images/n3.png",
-          "images/n4.jpg": "images/n4.png",
-          "images/n5.jpg": "images/n5.png",
-          "images/n6.jpg": "images/n6.png",
-          "images/rainN.jpg": "images/rainN.png",
-          "images/fireN.jpg": "images/fireN.png",
-          "images/nAfter.jpg": "images/nAfter.png",
-          "images/r1.jpg": "images/r1.png",
-          "images/r1_alt.jpg": "images/r1_alt.png",
-          "images/r2.jpg": "images/r2.png",
-          "images/r3.jpg": "images/r3.png",
-          "images/rAngry.jpg": "images/rAngry.png",
-          "images/exCafe.jpg": "images/exCafe.png"
-        };
+        // 立ち絵・スチル・背景をすべてPNG参照に統一
+        html = html.replaceAll("." + "jpg", ".png");
 
-        Object.entries(imageReplacements).forEach(([from, to]) => {
-          html = html.replaceAll(from, to);
-        });
-
+        // 新しいアフタースチルを登録
+        html = html.replaceAll('  w5: "images/w5.png",', '  w5: "images/w5.png",\n  w6: "images/w6.png",');
         html = html.replaceAll('  k5: "images/k5.png",', '  k5: "images/k5.png",\n  k6: "images/k6.png",');
         html = html.replaceAll('  y5: "images/y5.png",', '  y5: "images/y5.png",\n  y6: "images/y6.png",');
         html = html.replaceAll('  h5: "images/h5.png",', '  h5: "images/h5.png",\n  h6: "images/h6.png",');
         html = html.replaceAll('  n6: "images/n6.png",', '  n6: "images/n6.png",\n  nAfter: "images/nAfter.png",');
 
+        // ハッピーエンド後の画像だけ新スチルへ変更
+        html = html.replaceAll(
+          'watage: { ep: [STILL_IMGS.w1, STILL_IMGS.w2, STILL_IMGS.w3, STILL_IMGS.w4], confess: STILL_IMGS.w5, after: STILL_IMGS.wAfter },',
+          'watage: { ep: [STILL_IMGS.w1, STILL_IMGS.w2, STILL_IMGS.w3, STILL_IMGS.w4], confess: STILL_IMGS.w5, after: STILL_IMGS.w6 },'
+        );
         html = html.replaceAll(
           'komorin: { ep: [STILL_IMGS.k1, STILL_IMGS.k2, STILL_IMGS.k3, STILL_IMGS.k4], confess: STILL_IMGS.k5, after: STILL_IMGS.kAfter },',
-          'komorin: { ep: [STILL_IMGS.k2, STILL_IMGS.k3, STILL_IMGS.k4, STILL_IMGS.k5], confess: STILL_IMGS.k6, after: STILL_IMGS.kAfter },'
+          'komorin: { ep: [STILL_IMGS.k1, STILL_IMGS.k2, STILL_IMGS.k3, STILL_IMGS.k4], confess: STILL_IMGS.k5, after: STILL_IMGS.k6 },'
         );
         html = html.replaceAll(
           'yukke: { ep: [STILL_IMGS.y1, STILL_IMGS.y2, STILL_IMGS.y3, STILL_IMGS.y4], confess: STILL_IMGS.y5, after: STILL_IMGS.yAfter },',
-          'yukke: { ep: [STILL_IMGS.y2, STILL_IMGS.y3, STILL_IMGS.y4, STILL_IMGS.y5], confess: STILL_IMGS.y6, after: STILL_IMGS.yAfter },'
+          'yukke: { ep: [STILL_IMGS.y1, STILL_IMGS.y2, STILL_IMGS.y3, STILL_IMGS.y4], confess: STILL_IMGS.y5, after: STILL_IMGS.y6 },'
         );
         html = html.replaceAll(
           'yohaku: { ep: [STILL_IMGS.h1, STILL_IMGS.h2, STILL_IMGS.h3, STILL_IMGS.h4], confess: STILL_IMGS.h5, after: STILL_IMGS.hAfter },',
-          'yohaku: { ep: [STILL_IMGS.h2, STILL_IMGS.h3, STILL_IMGS.h4, STILL_IMGS.h5], confess: STILL_IMGS.h6, after: STILL_IMGS.hAfter },'
+          'yohaku: { ep: [STILL_IMGS.h1, STILL_IMGS.h2, STILL_IMGS.h3, STILL_IMGS.h4], confess: STILL_IMGS.h5, after: STILL_IMGS.h6 },'
         );
         html = html.replaceAll(
           'nagi: { ep: [STILL_IMGS.n1, STILL_IMGS.n2, STILL_IMGS.n3, STILL_IMGS.n4], confess: STILL_IMGS.n5, after: STILL_IMGS.n6 },',
-          'nagi: { ep: [STILL_IMGS.n2, STILL_IMGS.n3, STILL_IMGS.n4, STILL_IMGS.n5], confess: STILL_IMGS.n6, after: STILL_IMGS.nAfter || STILL_IMGS.n6 },'
+          'nagi: { ep: [STILL_IMGS.n1, STILL_IMGS.n2, STILL_IMGS.n3, STILL_IMGS.n4], confess: STILL_IMGS.n5, after: STILL_IMGS.nAfter },'
         );
 
         html = html.replaceAll(
