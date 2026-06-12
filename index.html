@@ -17,7 +17,7 @@
   const repo="pina753753-star/threads-academy-love-story";
   const baseGameBlobSha="aa3e0328c4ef800af9f3cd7bec862fa863e50734";
   try{
-    const res=await fetch(`https://api.github.com/repos/${repo}/git/blobs/${baseGameBlobSha}?v=22`,{cache:"no-store"});
+    const res=await fetch(`https://api.github.com/repos/${repo}/git/blobs/${baseGameBlobSha}?v=23`,{cache:"no-store"});
     if(!res.ok) throw new Error(`GitHub API error: ${res.status}`);
     const data=await res.json();
     const bytes=Uint8Array.from(atob(data.content.replace(/\s/g,"")),c=>c.charCodeAt(0));
@@ -44,7 +44,7 @@
     html=html.replaceAll("7週間で、運命の相手を見つけよう","");
     html=html.replaceAll('emoji: "🌼",','emoji: "🌱",');
 
-    const newImages=[
+    const lowerPngImages=[
       "rAngry","hAfter","wAfter","kAfter","yAfter",
       "fireW","fireK","fireY","fireH","fireN",
       "rainW","rainK","rainY","rainH","rainN","exCafe",
@@ -53,19 +53,21 @@
       "n1","n2","n3","n4","n5","n6","nAfter",
       "r1","r1_alt","r2","r3",
       "k1","k2","k3","k4","k5","k6",
-      "w1","w2","w3","w4","w5","w6"
+      "w2","w3","w4","w5","w6"
     ];
-    newImages.forEach(name=>{
-      html=html.replaceAll(`images/${name}.jpg`,`images/${name}.PNG`);
-      html=html.replaceAll(`images/${name}.png`,`images/${name}.PNG`);
+    lowerPngImages.forEach(name=>{
+      html=html.replaceAll(`images/${name}.jpg`,`images/${name}.png`);
+      html=html.replaceAll(`images/${name}.PNG`,`images/${name}.png`);
     });
+    html=html.replaceAll("images/w1.jpg","images/w1.PNG");
+    html=html.replaceAll("images/w1.png","images/w1.PNG");
 
-    html=html.replaceAll('  w5: "images/w5.PNG",','  w5: "images/w5.PNG",\n  w6: "images/w6.PNG",');
-    html=html.replaceAll('  k5: "images/k5.PNG",','  k5: "images/k5.PNG",\n  k6: "images/k6.PNG",');
-    html=html.replaceAll('  y5: "images/y5.PNG",','  y5: "images/y5.PNG",\n  y6: "images/y6.PNG",');
-    html=html.replaceAll('  h5: "images/h5.PNG",','  h5: "images/h5.PNG",\n  h6: "images/h6.PNG",');
-    html=html.replaceAll('  n6: "images/n6.PNG",','  n6: "images/n6.PNG",\n  nAfter: "images/nAfter.PNG",');
-    html=html.replaceAll('  r1: "images/r1.PNG",','  r1: "images/r1.PNG",\n  r1_alt: "images/r1_alt.PNG",');
+    html=html.replaceAll('  w5: "images/w5.png",','  w5: "images/w5.png",\n  w6: "images/w6.png",');
+    html=html.replaceAll('  k5: "images/k5.png",','  k5: "images/k5.png",\n  k6: "images/k6.png",');
+    html=html.replaceAll('  y5: "images/y5.png",','  y5: "images/y5.png",\n  y6: "images/y6.png",');
+    html=html.replaceAll('  h5: "images/h5.png",','  h5: "images/h5.png",\n  h6: "images/h6.png",');
+    html=html.replaceAll('  n6: "images/n6.png",','  n6: "images/n6.png",\n  nAfter: "images/nAfter.png",');
+    html=html.replaceAll('  r1: "images/r1.png",','  r1: "images/r1.png",\n  r1_alt: "images/r1_alt.png",');
 
     html=html.replaceAll(
       'watage: { ep: [STILL_IMGS.w1, STILL_IMGS.w2, STILL_IMGS.w3, STILL_IMGS.w4], confess: STILL_IMGS.w5, after: STILL_IMGS.wAfter },',
@@ -102,35 +104,15 @@
       '{ t: "「受けて立ちます。正々堂々と」", ran: 1, stillKey: "r1_alt",'
     );
 
-    const fallback=`<script>
-(function(){
-  const order=["PNG","png","jpg"];
-  document.addEventListener("error",function(event){
-    const img=event.target;
-    if(!img||img.tagName!=="IMG") return;
-    const src=img.getAttribute("src")||"";
-    const match=src.match(/^(.*)\\.(PNG|png|jpg)(\\?.*)?$/);
-    if(!match) return;
-    const tried=(img.dataset.imageFallbackTried||"").split(",").filter(Boolean);
-    if(!tried.includes(match[2])) tried.push(match[2]);
-    const next=order.find(ext=>!tried.includes(ext));
-    if(!next) return;
-    img.dataset.imageFallbackTried=tried.concat(next).join(",");
-    img.src=match[1]+"."+next+(match[3]||"");
-  },true);
-})();
-<\/script>`;
-    html=html.replace("</body>",fallback+"</body>");
+    const preloadUrls=[...new Set(html.match(/images\/[A-Za-z0-9_]+\.(?:PNG|png|jpg)/g)||[])];
+    const preloadScript=`<script>\n(function(){\n  const urls=${JSON.stringify(preloadUrls)};\n  window.__threadsAcademyPreloadedImages=[];\n  urls.forEach(function(url){\n    const img=new Image();\n    img.decoding="async";\n    img.src=url;\n    window.__threadsAcademyPreloadedImages.push(img);\n  });\n})();\n<\/script>`;
+
+    const fallback=`<script>\n(function(){\n  const order=["PNG","png","jpg"];\n  document.addEventListener("error",function(event){\n    const img=event.target;\n    if(!img||img.tagName!=="IMG") return;\n    img.style.visibility="hidden";\n    const src=img.getAttribute("src")||"";\n    const match=src.match(/^(.*)\\.(PNG|png|jpg)(\\?.*)?$/);\n    if(!match) return;\n    const tried=(img.dataset.imageFallbackTried||"").split(",").filter(Boolean);\n    if(!tried.includes(match[2])) tried.push(match[2]);\n    const next=order.find(ext=>!tried.includes(ext));\n    if(!next) return;\n    img.dataset.imageFallbackTried=tried.concat(next).join(",");\n    img.src=match[1]+"."+next+(match[3]||"");\n  },true);\n  document.addEventListener("load",function(event){\n    const img=event.target;\n    if(!img||img.tagName!=="IMG") return;\n    img.style.visibility="visible";\n    delete img.dataset.imageFallbackTried;\n  },true);\n})();\n<\/script>`;
+    html=html.replace("</body>",preloadScript+fallback+"</body>");
 
     html=html.replaceAll(
-      `, c.placeEmoji
-                    )`,
-      `, React.createElement('div', { style: { position: "relative", width: 52, height: 52, display: "flex", alignItems: "center", justifyContent: "center" }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1316}}
-                        , React.createElement('div', { style: { position: "absolute", top: 8, width: 17, height: 17, borderRadius: "50%", background: "linear-gradient(180deg, #a99ab5, #6f6178)", boxShadow: "inset 0 3px 0 rgba(255,255,255,.25)" }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1317}} )
-                        , React.createElement('div', { style: { position: "absolute", top: 24, width: 30, height: 22, borderRadius: "50% 50% 42% 42%", background: "linear-gradient(180deg, #9d8aaa, #6f6178)", opacity: .9 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1318}} )
-                        , React.createElement('div', { style: { position: "absolute", right: -6, bottom: -4, width: 22, height: 22, borderRadius: "50%", background: "#fff", border: "2px solid #cdbcd2", color: "#9b87a8", fontWeight: 800, fontSize: 14, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 2px 6px rgba(80,60,90,.12)" }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1319}}, "?")
-                      )
-                    )`
+      `, c.placeEmoji\n                    )`,
+      `, React.createElement('div', { style: { position: "relative", width: 52, height: 52, display: "flex", alignItems: "center", justifyContent: "center" }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1316}}\n                        , React.createElement('div', { style: { position: "absolute", top: 8, width: 17, height: 17, borderRadius: "50%", background: "linear-gradient(180deg, #a99ab5, #6f6178)", boxShadow: "inset 0 3px 0 rgba(255,255,255,.25)" }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1317}} )\n                        , React.createElement('div', { style: { position: "absolute", top: 24, width: 30, height: 22, borderRadius: "50% 50% 42% 42%", background: "linear-gradient(180deg, #9d8aaa, #6f6178)", opacity: .9 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1318}} )\n                        , React.createElement('div', { style: { position: "absolute", right: -6, bottom: -4, width: 22, height: 22, borderRadius: "50%", background: "#fff", border: "2px solid #cdbcd2", color: "#9b87a8", fontWeight: 800, fontSize: 14, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 2px 6px rgba(80,60,90,.12)" }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1319}}, "?")\n                      )\n                    )`
     );
 
     document.open();
