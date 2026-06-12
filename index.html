@@ -1,175 +1,116 @@
 <!doctype html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
   <title>Threads学園 恋物語 〜桜の散らない春〜</title>
   <style>
-    html, body {
-      width: 100%;
-      height: 100%;
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-      overscroll-behavior: none;
-      background: #fdeef3;
-    }
-    #root {
-      position: fixed;
-      inset: 0;
-      width: 100%;
-      height: 100dvh;
-      overflow: hidden;
-    }
-    .loading {
-      min-height: 100dvh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: system-ui, sans-serif;
-      color: #9c4f74;
-      background: #fff7fb;
-      padding: 24px;
-      text-align: center;
-      line-height: 1.8;
-      box-sizing: border-box;
-    }
+    html,body{width:100%;height:100%;margin:0;padding:0;overflow:hidden;overscroll-behavior:none;background:#fdeef3}
+    #root{position:fixed;inset:0;width:100%;height:100dvh;overflow:hidden}
+    .loading{min-height:100dvh;display:flex;align-items:center;justify-content:center;font-family:system-ui,sans-serif;color:#9c4f74;background:#fff7fb;padding:24px;text-align:center;line-height:1.8;box-sizing:border-box}
   </style>
 </head>
 <body>
-  <div id="root"><div class="loading">読み込み中...</div></div>
-  <script>
-    (async function () {
-      const repo = "pina753753-star/threads-academy-love-story";
-      const baseGameBlobSha = "aa3e0328c4ef800af9f3cd7bec862fa863e50734";
-      try {
-        const res = await fetch(`https://api.github.com/repos/${repo}/git/blobs/${baseGameBlobSha}?v=19`, { cache: "no-store" });
-        if (!res.ok) throw new Error(`GitHub API error: ${res.status}`);
-        const data = await res.json();
-        const b64 = data.content.replace(/\s/g, "");
-        const bytes = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
-        let html = new TextDecoder("utf-8").decode(bytes);
+<div id="root"><div class="loading">読み込み中...</div></div>
+<script>
+(async function(){
+  const repo="pina753753-star/threads-academy-love-story";
+  const baseGameBlobSha="aa3e0328c4ef800af9f3cd7bec862fa863e50734";
+  try{
+    const res=await fetch(`https://api.github.com/repos/${repo}/git/blobs/${baseGameBlobSha}?v=20`,{cache:"no-store"});
+    if(!res.ok) throw new Error(`GitHub API error: ${res.status}`);
+    const data=await res.json();
+    const bytes=Uint8Array.from(atob(data.content.replace(/\s/g,"")),c=>c.charCodeAt(0));
+    let html=new TextDecoder("utf-8").decode(bytes);
 
-        html = html.replace(
-          /body \{ background: #fdeef3; overflow-x: hidden; \}\s*#root \{ min-height: 100vh; \}/,
-          `html, body {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  overscroll-behavior: none;
-  background: #fdeef3;
-}
-#root {
-  position: fixed;
-  inset: 0;
-  width: 100%;
-  height: 100dvh;
-  overflow: hidden;
-}`
-        );
+    html=html.replace(
+      /body \{ background: #fdeef3; overflow-x: hidden; \}\s*#root \{ min-height: 100vh; \}/,
+      `html, body {width:100%;height:100%;overflow:hidden;overscroll-behavior:none;background:#fdeef3}\n#root {position:fixed;inset:0;width:100%;height:100dvh;overflow:hidden}`
+    );
 
-        const marker = "// 4話完了チェック：currentRouteIdのキャラを4回選んだら告白へ";
-        const start = html.indexOf(marker);
-        if (start !== -1) {
-          const nextMarker = "const next = turn + 1;";
-          const end = html.indexOf(nextMarker, start);
-          if (end !== -1) html = html.slice(0, start) + html.slice(end);
-        }
+    const marker="// 4話完了チェック：currentRouteIdのキャラを4回選んだら告白へ";
+    const start=html.indexOf(marker);
+    if(start!==-1){
+      const nextMarker="const next = turn + 1;";
+      const end=html.indexOf(nextMarker,start);
+      if(end!==-1) html=html.slice(0,start)+html.slice(end);
+    }
+    html=html.replace(
+      /\s*\/\/ 4話完了チェック：currentRouteIdのキャラを4回選んだら告白へ[\s\S]*?const next = turn \+ 1;/,
+      "\n    const next = turn + 1;"
+    );
 
-        html = html.replace(
-          /\s*\/\/ 4話完了チェック：currentRouteIdのキャラを4回選んだら告白へ[\s\S]*?const next = turn \+ 1;/,
-          "\n    const next = turn + 1;"
-        );
+    html=html.replaceAll("7週間で、運命の相手を見つけよう","");
+    html=html.replaceAll('emoji: "🌼",','emoji: "🌱",');
 
-        html = html.replaceAll("7週間で、運命の相手を見つけよう", "");
-        html = html.replaceAll('emoji: "🌼",', 'emoji: "🌱",');
+    const newImages=[
+      "rAngry","hAfter","wAfter","kAfter","yAfter",
+      "fireW","fireK","fireY","fireH","fireN",
+      "rainW","rainK","rainY","rainH","rainN","exCafe",
+      "y1","y2","y3","y4","y5","y6",
+      "h1","h2","h3","h4","h5","h6",
+      "n1","n2","n3","n4","n5","n6","nAfter",
+      "r1","r2","r3",
+      "k1","k2","k3","k4","k5","k6",
+      "w1","w2","w3","w4","w5","w6"
+    ];
+    newImages.forEach(name=>{
+      html=html.replaceAll(`images/${name}.jpg`,`images/${name}.PNG`);
+      html=html.replaceAll(`images/${name}.png`,`images/${name}.PNG`);
+    });
 
-        const NEW_IMAGE_NAMES = [
-          "rAngry",
-          "hAfter", "wAfter", "kAfter", "yAfter",
-          "fireW", "fireK", "fireY", "fireH", "fireN",
-          "rainW", "rainK", "rainY", "rainH", "rainN",
-          "exCafe",
-          "y1", "y2", "y3", "y4", "y5", "y6",
-          "h1", "h2", "h3", "h4", "h5", "h6",
-          "n1", "n2", "n3", "n4", "n5", "n6", "nAfter",
-          "r1", "r2", "r3",
-          "k1", "k2", "k3", "k4", "k5", "k6",
-          "w1", "w2", "w3", "w4", "w5", "w6"
-        ];
+    html=html.replaceAll('  w5: "images/w5.PNG",','  w5: "images/w5.PNG",\n  w6: "images/w6.PNG",');
+    html=html.replaceAll('  k5: "images/k5.PNG",','  k5: "images/k5.PNG",\n  k6: "images/k6.PNG",');
+    html=html.replaceAll('  y5: "images/y5.PNG",','  y5: "images/y5.PNG",\n  y6: "images/y6.PNG",');
+    html=html.replaceAll('  h5: "images/h5.PNG",','  h5: "images/h5.PNG",\n  h6: "images/h6.PNG",');
+    html=html.replaceAll('  n6: "images/n6.PNG",','  n6: "images/n6.PNG",\n  nAfter: "images/nAfter.PNG",');
 
-        NEW_IMAGE_NAMES.forEach((name) => {
-          html = html.replaceAll(`images/${name}.jpg`, `images/${name}.PNG`);
-          html = html.replaceAll(`images/${name}.png`, `images/${name}.PNG`);
-        });
+    html=html.replaceAll(
+      'watage: { ep: [STILL_IMGS.w1, STILL_IMGS.w2, STILL_IMGS.w3, STILL_IMGS.w4], confess: STILL_IMGS.w5, after: STILL_IMGS.wAfter },',
+      'watage: { ep: [STILL_IMGS.w2, STILL_IMGS.w3, STILL_IMGS.w4, STILL_IMGS.w5], confess: STILL_IMGS.w6, after: STILL_IMGS.wAfter },'
+    );
+    html=html.replaceAll(
+      'komorin: { ep: [STILL_IMGS.k1, STILL_IMGS.k2, STILL_IMGS.k3, STILL_IMGS.k4], confess: STILL_IMGS.k5, after: STILL_IMGS.kAfter },',
+      'komorin: { ep: [STILL_IMGS.k2, STILL_IMGS.k3, STILL_IMGS.k4, STILL_IMGS.k5], confess: STILL_IMGS.k6, after: STILL_IMGS.kAfter },'
+    );
+    html=html.replaceAll(
+      'yukke: { ep: [STILL_IMGS.y1, STILL_IMGS.y2, STILL_IMGS.y3, STILL_IMGS.y4], confess: STILL_IMGS.y5, after: STILL_IMGS.yAfter },',
+      'yukke: { ep: [STILL_IMGS.y2, STILL_IMGS.y3, STILL_IMGS.y4, STILL_IMGS.y5], confess: STILL_IMGS.y6, after: STILL_IMGS.yAfter },'
+    );
+    html=html.replaceAll(
+      'yohaku: { ep: [STILL_IMGS.h1, STILL_IMGS.h2, STILL_IMGS.h3, STILL_IMGS.h4], confess: STILL_IMGS.h5, after: STILL_IMGS.hAfter },',
+      'yohaku: { ep: [STILL_IMGS.h2, STILL_IMGS.h3, STILL_IMGS.h4, STILL_IMGS.h5], confess: STILL_IMGS.h6, after: STILL_IMGS.hAfter },'
+    );
+    html=html.replaceAll(
+      'nagi: { ep: [STILL_IMGS.n1, STILL_IMGS.n2, STILL_IMGS.n3, STILL_IMGS.n4], confess: STILL_IMGS.n5, after: STILL_IMGS.n6 },',
+      'nagi: { ep: [STILL_IMGS.n2, STILL_IMGS.n3, STILL_IMGS.n4, STILL_IMGS.n5], confess: STILL_IMGS.n6, after: STILL_IMGS.nAfter },'
+    );
 
-        html = html.replaceAll('  w5: "images/w5.PNG",', '  w5: "images/w5.PNG",\n  w6: "images/w6.PNG",');
-        html = html.replaceAll('  k5: "images/k5.PNG",', '  k5: "images/k5.PNG",\n  k6: "images/k6.PNG",');
-        html = html.replaceAll('  y5: "images/y5.PNG",', '  y5: "images/y5.PNG",\n  y6: "images/y6.PNG",');
-        html = html.replaceAll('  h5: "images/h5.PNG",', '  h5: "images/h5.PNG",\n  h6: "images/h6.PNG",');
-        html = html.replaceAll('  n6: "images/n6.PNG",', '  n6: "images/n6.PNG",\n  nAfter: "images/nAfter.PNG",');
+    html=html.replaceAll(
+      '{ t: "「らんさん、髪型今日も素敵ですね」", ran: 2, stillKey: "r1",',
+      '{ t: "「らんさん、髪型今日も素敵ですね」", ran: 2, stillKey: "r3",'
+    );
+    html=html.replaceAll(
+      '{ t: "「受けて立ちます。正々堂々と」", ran: 1, stillKey: "r3",',
+      '{ t: "「受けて立ちます。正々堂々と」", ran: 1, stillKey: "r1",'
+    );
 
-        html = html.replaceAll(
-          'watage: { ep: [STILL_IMGS.w1, STILL_IMGS.w2, STILL_IMGS.w3, STILL_IMGS.w4], confess: STILL_IMGS.w5, after: STILL_IMGS.wAfter },',
-          'watage: { ep: [STILL_IMGS.w2, STILL_IMGS.w3, STILL_IMGS.w4, STILL_IMGS.w5], confess: STILL_IMGS.wAfter, after: STILL_IMGS.w6 },'
-        );
-        html = html.replaceAll(
-          'komorin: { ep: [STILL_IMGS.k1, STILL_IMGS.k2, STILL_IMGS.k3, STILL_IMGS.k4], confess: STILL_IMGS.k5, after: STILL_IMGS.kAfter },',
-          'komorin: { ep: [STILL_IMGS.k2, STILL_IMGS.k3, STILL_IMGS.k4, STILL_IMGS.k5], confess: STILL_IMGS.kAfter, after: STILL_IMGS.k6 },'
-        );
-        html = html.replaceAll(
-          'yukke: { ep: [STILL_IMGS.y1, STILL_IMGS.y2, STILL_IMGS.y3, STILL_IMGS.y4], confess: STILL_IMGS.y5, after: STILL_IMGS.yAfter },',
-          'yukke: { ep: [STILL_IMGS.y2, STILL_IMGS.y3, STILL_IMGS.y4, STILL_IMGS.y5], confess: STILL_IMGS.yAfter, after: STILL_IMGS.y6 },'
-        );
-        html = html.replaceAll(
-          'yohaku: { ep: [STILL_IMGS.h1, STILL_IMGS.h2, STILL_IMGS.h3, STILL_IMGS.h4], confess: STILL_IMGS.h5, after: STILL_IMGS.hAfter },',
-          'yohaku: { ep: [STILL_IMGS.h2, STILL_IMGS.h3, STILL_IMGS.h4, STILL_IMGS.h5], confess: STILL_IMGS.hAfter, after: STILL_IMGS.h6 },'
-        );
-        html = html.replaceAll(
-          'nagi: { ep: [STILL_IMGS.n1, STILL_IMGS.n2, STILL_IMGS.n3, STILL_IMGS.n4], confess: STILL_IMGS.n5, after: STILL_IMGS.n6 },',
-          'nagi: { ep: [STILL_IMGS.n2, STILL_IMGS.n3, STILL_IMGS.n4, STILL_IMGS.n5], confess: STILL_IMGS.nAfter, after: STILL_IMGS.n6 },'
-        );
+    const fallback=`<script>\n(function(){\n  const order=["PNG","png","jpg"];\n  document.addEventListener("error",function(event){\n    const img=event.target;\n    if(!img||img.tagName!=="IMG") return;\n    const src=img.getAttribute("src")||"";\n    const match=src.match(/^(.*)\\.(PNG|png|jpg)(\\?.*)?$/);\n    if(!match) return;\n    const tried=(img.dataset.imageFallbackTried||"").split(",").filter(Boolean);\n    if(!tried.includes(match[2])) tried.push(match[2]);\n    const next=order.find(ext=>!tried.includes(ext));\n    if(!next) return;\n    img.dataset.imageFallbackTried=tried.concat(next).join(",");\n    img.src=match[1]+"."+next+(match[3]||"");\n  },true);\n})();\n<\/script>`;
+    html=html.replace("</body>",fallback+"</body>");
 
-        const fallbackScript = `<script>
-(function () {
-  const order = ["PNG", "png", "jpg"];
-  document.addEventListener("error", function (event) {
-    const img = event.target;
-    if (!img || img.tagName !== "IMG") return;
-    const src = img.getAttribute("src") || "";
-    const match = src.match(/^(.*)\\.(PNG|png|jpg)(\\?.*)?$/);
-    if (!match) return;
-    const tried = (img.dataset.imageFallbackTried || "").split(",").filter(Boolean);
-    const current = match[2];
-    if (!tried.includes(current)) tried.push(current);
-    const next = order.find((ext) => !tried.includes(ext));
-    if (!next) return;
-    img.dataset.imageFallbackTried = tried.concat(next).join(",");
-    img.src = match[1] + "." + next + (match[3] || "");
-  }, true);
+    html=html.replaceAll(
+      `, c.placeEmoji\n                    )`,
+      `, React.createElement('div', { style: { position: "relative", width: 52, height: 52, display: "flex", alignItems: "center", justifyContent: "center" }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1316}}\n                        , React.createElement('div', { style: { position: "absolute", top: 8, width: 17, height: 17, borderRadius: "50%", background: "linear-gradient(180deg, #a99ab5, #6f6178)", boxShadow: "inset 0 3px 0 rgba(255,255,255,.25)" }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1317}} )\n                        , React.createElement('div', { style: { position: "absolute", top: 24, width: 30, height: 22, borderRadius: "50% 50% 42% 42%", background: "linear-gradient(180deg, #9d8aaa, #6f6178)", opacity: .9 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1318}} )\n                        , React.createElement('div', { style: { position: "absolute", right: -6, bottom: -4, width: 22, height: 22, borderRadius: "50%", background: "#fff", border: "2px solid #cdbcd2", color: "#9b87a8", fontWeight: 800, fontSize: 14, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 2px 6px rgba(80,60,90,.12)" }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1319}}, "?")\n                      )\n                    )`
+    );
+
+    document.open();
+    document.write(html);
+    document.close();
+  }catch(error){
+    console.error(error);
+    document.getElementById("root").innerHTML=`<div class="loading">読み込みに失敗しました。<br>${String(error.message||error)}</div>`;
+  }
 })();
-<\/script>`;
-        html = html.replace("</body>", fallbackScript + "</body>");
-
-        html = html.replaceAll(
-          `, c.placeEmoji
-                    )`,
-          `, React.createElement('div', { style: { position: "relative", width: 52, height: 52, display: "flex", alignItems: "center", justifyContent: "center" }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1316}}
-                        , React.createElement('div', { style: { position: "absolute", top: 8, width: 17, height: 17, borderRadius: "50%", background: "linear-gradient(180deg, #a99ab5, #6f6178)", boxShadow: "inset 0 3px 0 rgba(255,255,255,.25)" }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1317}} )
-                        , React.createElement('div', { style: { position: "absolute", top: 24, width: 30, height: 22, borderRadius: "50% 50% 42% 42%", background: "linear-gradient(180deg, #9d8aaa, #6f6178)", opacity: .9 }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1318}} )
-                        , React.createElement('div', { style: { position: "absolute", right: -6, bottom: -4, width: 22, height: 22, borderRadius: "50%", background: "#fff", border: "2px solid #cdbcd2", color: "#9b87a8", fontWeight: 800, fontSize: 14, display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 2px 6px rgba(80,60,90,.12)" }, __self: this, __source: {fileName: _jsxFileName, lineNumber: 1319}}, "?")
-                      )
-                    )`
-        );
-
-        document.open();
-        document.write(html);
-        document.close();
-      } catch (error) {
-        console.error(error);
-        document.getElementById("root").innerHTML = `<div class="loading">読み込みに失敗しました。<br>${String(error.message || error)}</div>`;
-      }
-    })();
-  </script>
+</script>
 </body>
 </html>
