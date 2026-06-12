@@ -43,7 +43,7 @@
       const repo = "pina753753-star/threads-academy-love-story";
       const baseGameBlobSha = "aa3e0328c4ef800af9f3cd7bec862fa863e50734";
       try {
-        const res = await fetch(`https://api.github.com/repos/${repo}/git/blobs/${baseGameBlobSha}?v=13`, { cache: "no-store" });
+        const res = await fetch(`https://api.github.com/repos/${repo}/git/blobs/${baseGameBlobSha}?v=14`, { cache: "no-store" });
         if (!res.ok) throw new Error(`GitHub API error: ${res.status}`);
         const data = await res.json();
         const b64 = data.content.replace(/\s/g, "");
@@ -85,7 +85,64 @@
 
         html = html.replaceAll("7週間で、運命の相手を見つけよう", "");
         html = html.replaceAll('emoji: "🌼",', 'emoji: "🌱",');
-        html = html.replaceAll('images/w1.jpg', 'images/w1.PNG');
+
+        const imageReplacements = {
+          "images/w1.jpg": "images/w1.PNG",
+          "images/w2.jpg": "images/w2.png",
+          "images/w3.jpg": "images/w3.png",
+          "images/w4.jpg": "images/w4.png",
+          "images/w5.jpg": "images/w5.png",
+          "images/w6.jpg": "images/w6.png",
+          "images/rainW.jpg": "images/rainW.png",
+          "images/fireW.jpg": "images/fireW.png",
+          "images/wAfter.jpg": "images/wAfter.png",
+          "images/k1.jpg": "images/k1.png",
+          "images/k2.jpg": "images/k2.png",
+          "images/k3.jpg": "images/k3.png",
+          "images/k4.jpg": "images/k4.png",
+          "images/k5.jpg": "images/k5.png",
+          "images/k6.jpg": "images/k6.png",
+          "images/rainK.jpg": "images/rainK.png",
+          "images/fireK.jpg": "images/fireK.png",
+          "images/kAfter.jpg": "images/kAfter.png",
+          "images/y1.jpg": "images/y1.png",
+          "images/y2.jpg": "images/y2.png",
+          "images/y3.jpg": "images/y3.png",
+          "images/y4.jpg": "images/y4.png",
+          "images/y5.jpg": "images/y5.png",
+          "images/y6.jpg": "images/y6.png",
+          "images/rainY.jpg": "images/rainY.png",
+          "images/fireY.jpg": "images/fireY.png",
+          "images/yAfter.jpg": "images/yAfter.png",
+          "images/h1.jpg": "images/h1.png",
+          "images/h2.jpg": "images/h2.png",
+          "images/h3.jpg": "images/h3.png",
+          "images/h4.jpg": "images/h4.png",
+          "images/h5.jpg": "images/h5.png",
+          "images/h6.jpg": "images/h6.png",
+          "images/rainH.jpg": "images/rainH.png",
+          "images/fireH.jpg": "images/fireH.png",
+          "images/hAfter.jpg": "images/hAfter.png",
+          "images/n1.jpg": "images/n1.png",
+          "images/n2.jpg": "images/n2.png",
+          "images/n3.jpg": "images/n3.png",
+          "images/n4.jpg": "images/n4.png",
+          "images/n5.jpg": "images/n5.png",
+          "images/n6.jpg": "images/n6.png",
+          "images/rainN.jpg": "images/rainN.png",
+          "images/fireN.jpg": "images/fireN.png",
+          "images/nAfter.jpg": "images/nAfter.png",
+          "images/r1.jpg": "images/r1.png",
+          "images/r1_alt.jpg": "images/r1_alt.png",
+          "images/r2.jpg": "images/r2.png",
+          "images/r3.jpg": "images/r3.png",
+          "images/rAngry.jpg": "images/rAngry.png",
+          "images/exCafe.jpg": "images/exCafe.png"
+        };
+
+        Object.entries(imageReplacements).forEach(([from, to]) => {
+          html = html.replaceAll(from, to);
+        });
 
         html = html.replaceAll(
           `, c.placeEmoji
