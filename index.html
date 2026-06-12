@@ -43,7 +43,7 @@
       const repo = "pina753753-star/threads-academy-love-story";
       const baseGameBlobSha = "aa3e0328c4ef800af9f3cd7bec862fa863e50734";
       try {
-        const res = await fetch(`https://api.github.com/repos/${repo}/git/blobs/${baseGameBlobSha}?v=12`, { cache: "no-store" });
+        const res = await fetch(`https://api.github.com/repos/${repo}/git/blobs/${baseGameBlobSha}?v=13`, { cache: "no-store" });
         if (!res.ok) throw new Error(`GitHub API error: ${res.status}`);
         const data = await res.json();
         const b64 = data.content.replace(/\s/g, "");
@@ -85,6 +85,7 @@
 
         html = html.replaceAll("7週間で、運命の相手を見つけよう", "");
         html = html.replaceAll('emoji: "🌼",', 'emoji: "🌱",');
+        html = html.replaceAll('images/w1.jpg', 'images/w1.PNG');
 
         html = html.replaceAll(
           `, c.placeEmoji
